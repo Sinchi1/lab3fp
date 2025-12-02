@@ -1,13 +1,9 @@
 defmodule Lab3 do
-  # -------------------------
-  # Интерполяция Гаусса
-  # -------------------------
   def gauss(points, x) do
     n = length(points)
     xs = Enum.map(points, &elem(&1, 0))
     ys = Enum.map(points, &elem(&1, 1))
 
-    # Проверка равномерности
     h = Enum.at(xs, 1) - Enum.at(xs, 0)
     unless Enum.chunk_every(xs, 2, 1, :discard)
            |> Enum.all?(fn [a,b] -> abs(b-a - h) < 1.0e-8 end) do
@@ -17,10 +13,8 @@ defmodule Lab3 do
     mid = div(n, 2)
     t = (x - Enum.at(xs, mid)) / h
 
-    # Построим центральные разности
     diff_table = central_diff_table(ys)
 
-    # Вычисляем интерполяционный многочлен
     Enum.with_index(diff_table)
     |> Enum.reduce(0.0, fn {row, i}, acc ->
       if i == 0 do
@@ -32,9 +26,7 @@ defmodule Lab3 do
   end
 
 
-  # -------------------------
-  # Функция Лагранжа
-  # -------------------------
+
   def lagrange(points, x) do
     Enum.with_index(points)
     |> Enum.reduce(0.0, fn {{xi, yi}, i}, acc ->
@@ -47,9 +39,6 @@ defmodule Lab3 do
     end)
   end
 
-  # -------------------------
-  # Функция Ньютона
-  # -------------------------
   def newton_fun(points) do
     xs = Enum.map(points, &elem(&1,0))
     coeffs = newton_coeffs(points)
@@ -68,9 +57,6 @@ defmodule Lab3 do
     end
   end
 
-  # -------------------------
-  # Разделённые разности Ньютона
-  # -------------------------
   defp newton_coeffs(points) do
     xs = Enum.map(points, &elem(&1,0))
     ys = Enum.map(points, &elem(&1,1))
@@ -89,9 +75,6 @@ defmodule Lab3 do
     build_div_diff(next, xs, [cur|acc])
   end
 
-  # -------------------------
-  # Построение таблицы центральных разностей для Гаусса
-  # -------------------------
   defp central_diff_table(ys) do
     build_diff_table(ys, [])
   end
@@ -103,9 +86,6 @@ defmodule Lab3 do
     build_diff_table(next, [cur|acc])
   end
 
-  # -------------------------
-  # Вычисление члена многочлена Гаусса
-  # -------------------------
   defp gauss_term(t, 1), do: t
   defp gauss_term(t, n) when n > 1 do
     Enum.reduce(1..n, 1.0, fn i, acc ->
@@ -118,9 +98,6 @@ defmodule Lab3 do
   defp factorial(n), do: Enum.reduce(1..n, 1, &*/2)
 end
 
-# -------------------------
-# Модуль Main
-# -------------------------
 defmodule Main do
   def run(opts) do
     file = opts[:file] || abort("Use --file FILE")
@@ -166,9 +143,6 @@ defmodule Main do
   end
 end
 
-# -------------------------
-# Парсинг аргументов
-# -------------------------
 {opts,_,_} =
   OptionParser.parse(System.argv(),
     switches: [
